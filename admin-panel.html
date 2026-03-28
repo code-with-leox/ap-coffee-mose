@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coffee Moose — Admin Panel</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f2eb;
+      --surface: #fff;
+      --ink: #2f241d;
+      --muted: #77665a;
+      --brand: #6f4e37;
+      --brand-2: #a47149;
+      --ok: #297d4f;
+      --warn: #b78d2f;
+      --danger: #ae3f3f;
+      --line: #e8ded4;
+      --radius: 14px;
+      --shadow: 0 10px 24px rgba(58, 35, 19, 0.08);
+      font-family: Inter, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #f9f4ee 0%, #f4ecdf 100%);
+      color: var(--ink);
+      min-height: 100dvh;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    aside {
+      background: #2f241d;
+      color: #f5ede3;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: #ccb9a8;
+      font-size: 0.85rem;
+    }
+
+    nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-item {
+      border: 0;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: #e9dccf;
+      padding: 11px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .nav-item.active,
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .support {
+      margin-top: auto;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.86rem;
+      color: #d8cabd;
+    }
+
+    main {
+      padding: 24px;
+      display: grid;
+      gap: 20px;
+      align-content: start;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .topbar p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 10px 14px;
+      min-width: 240px;
+      outline: none;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: #ede3d8;
+      color: var(--ink);
+    }
+
+    .stats {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat {
+      padding: 16px;
+    }
+
+    .stat h3 {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .metric {
+      margin-top: 8px;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .delta {
+      margin-top: 6px;
+      font-size: 0.82rem;
+    }
+
+    .delta.ok { color: var(--ok); }
+    .delta.warn { color: var(--warn); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+    }
+
+    .section {
+      padding: 16px;
+    }
+
+    .section h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .status.paid { background: #dcf5e6; color: #21633f; }
+    .status.pending { background: #fff3d5; color: #8a6a1f; }
+    .status.cancelled { background: #ffe1e1; color: #953535; }
+
+    .stock-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .stock-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .progress {
+      height: 8px;
+      background: #efe6db;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      border-radius: inherit;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .kpi {
+      padding: 14px;
+    }
+
+    .kpi small {
+      color: var(--muted);
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 1.3rem;
+    }
+
+    @media (max-width: 1020px) {
+      body { grid-template-columns: 1fr; }
+      aside { position: static; height: auto; }
+      .stats { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      main { padding: 14px; }
+      .stats { grid-template-columns: 1fr; }
+      .mini-grid { grid-template-columns: 1fr; }
+      .search { min-width: 160px; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <div class="brand">
+      <h1>Coffee Moose</h1>
+      <p>Store Admin Panel</p>
+    </div>
+
+    <nav aria-label="Admin sections">
+      <button class="nav-item active" type="button">Dashboard</button>
+      <button class="nav-item" type="button">Orders</button>
+      <button class="nav-item" type="button">Products</button>
+      <button class="nav-item" type="button">Customers</button>
+      <button class="nav-item" type="button">Promotions</button>
+      <button class="nav-item" type="button">Settings</button>
+    </nav>
+
+    <div class="support">
+      Shift manager: <strong>Admin</strong><br />
+      Last sync: <span id="lastSync"></span>
+    </div>
+  </aside>
+
+  <main>
+    <section class="topbar card">
+      <div>
+        <h2>Welcome back 👋</h2>
+        <p>Overview of online + in-store operations for coffeemoose.tj</p>
+      </div>
+      <div class="toolbar">
+        <input class="search" type="search" placeholder="Search orders, customers, products" />
+        <button class="btn secondary" type="button">Export</button>
+        <button class="btn primary" type="button">+ Add Product</button>
+      </div>
+    </section>
+
+    <section class="stats">
+      <article class="card stat">
+        <h3>Today's Revenue</h3>
+        <div class="metric" id="revenueMetric">—</div>
+        <div class="delta ok">+8.4% vs yesterday</div>
+      </article>
+      <article class="card stat">
+        <h3>Orders Today</h3>
+        <div class="metric">126</div>
+        <div class="delta ok">+15 new in the last hour</div>
+      </article>
+      <article class="card stat">
+        <h3>Avg. Ticket</h3>
+        <div class="metric">58 TJS</div>
+        <div class="delta warn">-2.1% this week</div>
+      </article>
+      <article class="card stat">
+        <h3>Low Stock Items</h3>
+        <div class="metric">7</div>
+        <div class="delta warn">Needs restock before Monday</div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card section">
+        <div class="section-header">
+          <h3>Recent Orders</h3>
+          <button class="btn secondary" type="button">View all</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable"></tbody>
+        </table>
+      </article>
+
+      <article class="card section">
+        <div class="section-header">
+          <h3>Inventory Alerts</h3>
+          <button class="btn secondary" type="button">Restock</button>
+        </div>
+        <ul class="stock-list" id="stockList"></ul>
+      </article>
+    </section>
+
+    <section class="mini-grid">
+      <article class="card kpi">
+        <small>Active promotions</small>
+        <strong>3 campaigns</strong>
+      </article>
+      <article class="card kpi">
+        <small>New customers this week</small>
+        <strong>+94 users</strong>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const tjs = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'TJS', maximumFractionDigits: 0 });
+
+    const todayRevenue = 7348;
+    const orders = [
+      { id: '#CM-2151', customer: 'Shabnam R.', items: 3, total: 84, status: 'Paid' },
+      { id: '#CM-2150', customer: 'Muhammad A.', items: 2, total: 52, status: 'Pending' },
+      { id: '#CM-2149', customer: 'Farzona M.', items: 5, total: 133, status: 'Paid' },
+      { id: '#CM-2148', customer: 'Rustam K.', items: 1, total: 26, status: 'Cancelled' },
+      { id: '#CM-2147', customer: 'Yodgor S.', items: 4, total: 91, status: 'Paid' }
+    ];
+
+    const stock = [
+      { name: 'Ethiopian Beans 1kg', level: 24 },
+      { name: 'Vanilla Syrup 700ml', level: 31 },
+      { name: 'Takeaway Cups 12oz', level: 42 },
+      { name: 'Cold Brew Bottles', level: 18 }
+    ];
+
+    document.getElementById('revenueMetric').textContent = tjs.format(todayRevenue);
+    document.getElementById('lastSync').textContent = new Date().toLocaleString();
+
+    const ordersTable = document.getElementById('ordersTable');
+    orders.forEach((order) => {
+      const statusClass = order.status.toLowerCase();
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><strong>${order.id}</strong></td>
+        <td>${order.customer}</td>
+        <td>${order.items}</td>
+        <td>${tjs.format(order.total)}</td>
+        <td><span class="status ${statusClass}">${order.status}</span></td>
+      `;
+      ordersTable.appendChild(row);
+    });
+
+    const stockList = document.getElementById('stockList');
+    stock.forEach((item) => {
+      const li = document.createElement('li');
+      li.className = 'stock-item';
+      li.innerHTML = `
+        <strong>${item.name}</strong>
+        <span>${item.level}% remaining</span>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${item.level}">
+          <span style="width:${item.level}%"></span>
+        </div>
+      `;
+      stockList.appendChild(li);
+    });
+  </script>
+</body>
+</html>
